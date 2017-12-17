@@ -2,6 +2,7 @@ package com.taotao.manage.service.redis.impl;
 
 import org.springframework.beans.factory.annotation.Autowired;
 
+import com.taotao.manage.service.redis.RedisFunction;
 import com.taotao.manage.service.redis.RedisService;
 
 import redis.clients.jedis.Jedis;
@@ -11,71 +12,81 @@ public class JedisPoolService implements RedisService {
 	
 	@Autowired
 	private JedisPool jedisPool;
-
-	@Override
-	public String set(String key, String value) {
+	
+	private <T> T execute(RedisFunction<T,Jedis> fun) {
 		Jedis jedis = null;
 		try {
 			jedis = jedisPool.getResource();
-			return jedis.set(key, value);
+			return fun.callback(jedis);
 		} finally {
 			jedis.close();
 		}
 	}
 
 	@Override
-	public String setex(String key, int seconds, String value) {
-		Jedis jedis = null;
-		try {
-			jedis = jedisPool.getResource();
-			return jedis.setex(key, seconds, value);
-		} finally {
-			jedis.close();
-		}
+	public String set(final String key, final String value) {
+		return execute(new RedisFunction<String, Jedis>() {
+
+			@Override
+			public String callback(Jedis jedis) {
+				return jedis.set(key, value);
+			}
+		});
 	}
 
 	@Override
-	public Long expire(String key, int seconds) {
-		Jedis jedis = null;
-		try {
-			jedis = jedisPool.getResource();
-			return jedis.expire(key, seconds);
-		} finally {
-			jedis.close();
-		}
+	public String setex(final String key, final int seconds, final String value) {
+		return execute(new RedisFunction<String, Jedis>() {
+
+			@Override
+			public String callback(Jedis jedis) {
+				return jedis.setex(key, seconds, value);
+			}
+		});
 	}
 
 	@Override
-	public String get(String key) {
-		Jedis jedis = null;
-		try {
-			jedis = jedisPool.getResource();
-			return jedis.get(key);
-		} finally {
-			jedis.close();
-		}
+	public Long expire(final String key, final int seconds) {
+		return execute(new RedisFunction<Long, Jedis>() {
+
+			@Override
+			public Long callback(Jedis jedis) {
+				return jedis.expire(key, seconds);
+			}
+		});
 	}
 
 	@Override
-	public Long del(String key) {
-		Jedis jedis = null;
-		try {
-			jedis = jedisPool.getResource();
-			return jedis.del(key);
-		} finally {
-			jedis.close();
-		}
+	public String get(final String key) {
+		return execute(new RedisFunction<String, Jedis>() {
+
+			@Override
+			public String callback(Jedis jedis) {
+				return jedis.get(key);
+			}
+		});
 	}
 
 	@Override
-	public Long incr(String key) {
-		Jedis jedis = null;
-		try {
-			jedis = jedisPool.getResource();
-			return jedis.incr(key);
-		} finally {
-			jedis.close();
-		}
+	public Long del(final String key) {
+		return execute(new RedisFunction<Long, Jedis>() {
+
+			@Override
+			public Long callback(Jedis jedis) {
+				return jedis.del(key);
+			}
+		});
+	}
+
+	@Override
+	public Long incr(final String key) {
+		return execute(new RedisFunction<Long, Jedis>() {
+
+			@Override
+			public Long callback(Jedis jedis) {
+				return jedis.incr(key);
+			}
+		});
 	}
 
 }
