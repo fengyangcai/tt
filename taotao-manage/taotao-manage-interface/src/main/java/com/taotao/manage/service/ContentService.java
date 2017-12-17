@@ -14,4 +14,11 @@ public interface ContentService extends BaseService<Content> {
 	 */
 	DataGridResult queryContentListByPage(Long categoryId, Integer page, Integer rows);
 
+	/**
+	 * 加载大广告分类下的6条大广告数据
+	 * @return
+	 * @throws Exception 
+	 */
+	String getPortalBigAdData() throws Exception;
+
 }
