@@ -1,6 +1,6 @@
 <%@ page language="java" contentType="text/html; charset=UTF-8" pageEncoding="UTF-8"%>
 <div>
-	 <ul id="contentCategory" class="easyui-tree">
+	 <ul id="contentCategory">
     </ul>
 </div>
 <div id="contentCategoryMenu" class="easyui-menu" style="width:120px;" data-options="onClick:menuHandler">

@@ -5,11 +5,11 @@ import java.util.HashMap;
 import java.util.List;
 import java.util.Map;
 
+import org.apache.commons.lang3.StringUtils;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.beans.factory.annotation.Value;
 import org.springframework.stereotype.Service;
 
-import com.fasterxml.jackson.core.JsonProcessingException;
 import com.fasterxml.jackson.databind.ObjectMapper;
 import com.github.pagehelper.PageHelper;
 import com.github.pagehelper.PageInfo;
@@ -17,6 +17,7 @@ import com.taotao.common.vo.DataGridResult;
 import com.taotao.manage.mapper.ContentMapper;
 import com.taotao.manage.pojo.Content;
 import com.taotao.manage.service.ContentService;
+import com.taotao.manage.service.redis.RedisService;
 
 import tk.mybatis.mapper.entity.Example;
 
@@ -32,7 +33,16 @@ public class ContentServiceImpl extends BaseServiceImpl<Content> implements Cont
 	@Autowired
 	private ContentMapper contentMapper;
 	
+	@Autowired
+	private RedisService redisService;
+	
 	private static final ObjectMapper MAPPER = new ObjectMapper();
+
+	//首页大广告数据存储在redis中的key的名称
+	private static final String REDIS_BIG_AD_KEY = "PORTAL_INDEX_BIG_AD_DATA";
+
+	//首页大广告数据存储在redis中的数据的过期时间；1天
+	private static final int REDIS_BIG_AD_EXPIRE_TIME = 60*60*24;
 
 	@Override
 	public DataGridResult queryContentListByPage(Long categoryId, Integer page, Integer rows) {
@@ -57,6 +67,17 @@ public class ContentServiceImpl extends BaseServiceImpl<Content> implements Cont
 	@Override
 	public String getPortalBigAdData() throws Exception {
 		String resultStr = "";
+		
+		try {
+			//先从redis中查询大广告数据
+			resultStr = redisService.get(REDIS_BIG_AD_KEY);
+			if(StringUtils.isNotBlank(resultStr)) {
+				return resultStr;
+			}
+		} catch (Exception e1) {
+			e1.printStackTrace();
+		}
+		
 		//1、查询6条最新的大广告数据
 		DataGridResult dataGridResult = queryContentListByPage(CONTENT_CATEGORY_BIG_AD_ID, 1, PORTAL_INDEX_BIG_ADD_NUMBER);
 		
@@ -80,6 +101,13 @@ public class ContentServiceImpl extends BaseServiceImpl<Content> implements Cont
 			}
 			//3、返回json格式字符串
 			resultStr = MAPPER.writeValueAsString(resultList);
+			
+			try {
+				//将大广告数据存入redis；并设置过期时间，1天
+				redisService.setex(REDIS_BIG_AD_KEY, REDIS_BIG_AD_EXPIRE_TIME, resultStr);
+			} catch (Exception e) {
+				e.printStackTrace();
+			}
 		}
 		
 		return resultStr;
