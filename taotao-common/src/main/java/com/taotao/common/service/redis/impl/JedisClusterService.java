@@ -1,14 +1,15 @@
-package com.taotao.manage.service.redis.impl;
+package com.taotao.common.service.redis.impl;
 
 import org.springframework.beans.factory.annotation.Autowired;
 
-import com.taotao.manage.service.redis.RedisService;
+import com.taotao.common.service.redis.RedisService;
 
 import redis.clients.jedis.JedisCluster;
 
 public class JedisClusterService implements RedisService {
 	
-	@Autowired
+	//说明该注入对象是非必须的；如果能在ioc容器中找到则注入
+	@Autowired(required = false)
 	private JedisCluster jedisCluster;
 
 	@Override

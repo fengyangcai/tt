@@ -46,7 +46,7 @@
 	</bean>
 	
 	<!-- 注册单机版的redisService实现类 -->
-	<bean id="jedisPoolService" class="com.taotao.manage.service.redis.impl.JedisPoolService"></bean>
+	<bean id="jedisPoolService" class="com.taotao.common.service.redis.impl.JedisPoolService"></bean>
 	<!-- 注册集群版的redisService实现类 -->
-	<!-- <bean id="jedisClusterService" class="com.taotao.manage.service.redis.impl.JedisClusterService"></bean> -->
+	<!-- <bean id="jedisClusterService" class="com.taotao.common.service.redis.impl.JedisClusterService"></bean> -->
 </beans>
