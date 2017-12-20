@@ -25,4 +25,12 @@ public interface UserService {
 	 */
 	void register(User user);
 
+	/**
+	 * 根据用户名和密码查询用户
+	 * @param user
+	 * @return
+	 * @throws Exception 
+	 */
+	String login(User user) throws Exception;
+
 }

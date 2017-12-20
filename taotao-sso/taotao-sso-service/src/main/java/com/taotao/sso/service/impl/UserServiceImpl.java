@@ -1,12 +1,15 @@
 package com.taotao.sso.service.impl;
 
 import java.util.Date;
+import java.util.List;
 
 import org.apache.commons.codec.digest.DigestUtils;
 import org.apache.commons.lang3.StringUtils;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.stereotype.Service;
 
+import com.fasterxml.jackson.core.JsonProcessingException;
+import com.fasterxml.jackson.databind.ObjectMapper;
 import com.taotao.common.service.redis.RedisService;
 import com.taotao.sso.mapper.UserMapper;
 import com.taotao.sso.pojo.User;
@@ -23,6 +26,8 @@ public class UserServiceImpl implements UserService {
 	
 	@Autowired
 	private RedisService redisService;
+	
+	private static final ObjectMapper MAPPER = new ObjectMapper();
 
 	@Override
 	public Boolean check(String param, Integer type) {
@@ -70,6 +75,27 @@ public class UserServiceImpl implements UserService {
 		user.setUpdated(user.getCreated());
 		
 		userMapper.insertSelective(user);
+	}
+
+	@Override
+	public String login(User user) throws Exception {
+		String ticket = "";
+		//1、根据用户名和密码查询用户
+		user.setPassword(DigestUtils.md5Hex(user.getPassword()));
+		List<User> list = userMapper.select(user);
+		if(list != null && list.size()>0) {
+			//2、获取用户
+			User tmp = list.get(0);
+			//3、将用户转换为json格式字符串存入redis，设置过期时间为1小时
+			
+			ticket = DigestUtils.md5Hex(user.getUsername() + System.currentTimeMillis());//值要唯一
+			
+			String key = TICKET_PREFIX + ticket;
+			
+			redisService.setex(key, 3600, MAPPER.writeValueAsString(tmp));
+		}
+		//4、返回redis中用户信息对应的部分key，--- ticket
+		return ticket;
 	}
 
 }
