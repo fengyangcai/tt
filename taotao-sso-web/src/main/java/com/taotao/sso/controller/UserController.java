@@ -8,6 +8,7 @@ import org.springframework.stereotype.Controller;
 import org.springframework.web.bind.annotation.PathVariable;
 import org.springframework.web.bind.annotation.RequestMapping;
 import org.springframework.web.bind.annotation.RequestMethod;
+import org.springframework.web.bind.annotation.RequestParam;
 
 import com.taotao.sso.service.UserService;
 
@@ -25,12 +26,16 @@ public class UserController {
 	 * @return
 	 */
 	@RequestMapping(value = "/check/{param}/{type}", method = RequestMethod.GET)
-	public ResponseEntity<String> check(@PathVariable String param, @PathVariable Integer type){
+	public ResponseEntity<String> check(@PathVariable String param, @PathVariable Integer type,
+			@RequestParam(value="callback", required = false)String callback){
 		try {
 			if(0 < type && type < 4) {
 				Boolean bool = userService.check(param, type);
-				
-				return ResponseEntity.ok(bool.toString());
+				String resultStr = bool.toString();
+				if(StringUtils.isNotBlank(callback)) {//需要支持jsonp
+					resultStr = callback + "(" + resultStr + ");";
+				}
+				return ResponseEntity.ok(resultStr);
 			} else {//参数不合法
 				return ResponseEntity.status(HttpStatus.BAD_REQUEST).body(null);
 			}
@@ -47,10 +52,14 @@ public class UserController {
 	 * @return
 	 */
 	@RequestMapping(value = "/{ticket}", method = RequestMethod.GET)
-	public ResponseEntity<String> queryUserByTicket(@PathVariable String ticket){
+	public ResponseEntity<String> queryUserByTicket(@PathVariable String ticket, 
+			@RequestParam(value="callback", required = false)String callback){
 		try {
 			if(StringUtils.isNotBlank(ticket)) {
 				String userStr = userService.queryUserStrByTicket(ticket);
+				if(StringUtils.isNotBlank(callback)) {//需要支持jsonp
+					userStr = callback + "(" + userStr + ");";
+				}
 				return ResponseEntity.ok(userStr);
 			}
 		} catch (Exception e) {

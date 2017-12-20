@@ -73,5 +73,10 @@
 			<artifactId>taotao-common</artifactId>
 			<version>1.0.0-SNAPSHOT</version>
 		</dependency>
+		<!-- 加密解密 -->
+		<dependency>
+			<groupId>commons-codec</groupId>
+			<artifactId>commons-codec</artifactId>
+		</dependency>
 	</dependencies>
 </project>

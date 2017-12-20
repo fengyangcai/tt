@@ -1,5 +1,7 @@
 package com.taotao.sso.service;
 
+import com.taotao.sso.pojo.User;
+
 public interface UserService {
 
 	/**
@@ -16,5 +18,11 @@ public interface UserService {
 	 * @return
 	 */
 	String queryUserStrByTicket(String ticket);
+
+	/**
+	 * 将用户信息保存到数据库
+	 * @param user
+	 */
+	void register(User user);
 
 }

@@ -1,5 +1,8 @@
 package com.taotao.sso.service.impl;
 
+import java.util.Date;
+
+import org.apache.commons.codec.digest.DigestUtils;
 import org.apache.commons.lang3.StringUtils;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.stereotype.Service;
@@ -57,6 +60,16 @@ public class UserServiceImpl implements UserService {
 			return userJsonStr;
 		}
 		return "";
+	}
+
+	@Override
+	public void register(User user) {
+		//将用户信息保存到数据库；密码加密
+		user.setPassword(DigestUtils.md5Hex(user.getPassword()));
+		user.setCreated(new Date());
+		user.setUpdated(user.getCreated());
+		
+		userMapper.insertSelective(user);
 	}
 
 }
