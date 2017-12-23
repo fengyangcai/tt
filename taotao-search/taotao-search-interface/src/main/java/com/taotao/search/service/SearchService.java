@@ -23,4 +23,17 @@ public interface SearchService {
 	 */
 	DataGridResult search(String keyWords, Integer page, Integer rows) throws Exception;
 
+	/**
+	 * 新增或更新solr中数据
+	 * @param solrItem
+	 * @throws Exception 
+	 */
+	void saveOrUpdateSolrItem(SolrItem solrItem) throws Exception;
+
+	/**
+	 * 根据商品id删除solr中对应的商品索引数据
+	 * @param itemId
+	 */
+	void deleteSolrItemByItemId(Long itemId) throws Exception;
+
 }

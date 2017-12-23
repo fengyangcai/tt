@@ -1,8 +1,16 @@
 package com.taotao.manage.controller;
 
+import javax.jms.Destination;
+import javax.jms.JMSException;
+import javax.jms.Message;
+import javax.jms.Session;
+
+import org.apache.activemq.command.ActiveMQMapMessage;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.http.HttpStatus;
 import org.springframework.http.ResponseEntity;
+import org.springframework.jms.core.JmsTemplate;
+import org.springframework.jms.core.MessageCreator;
 import org.springframework.stereotype.Controller;
 import org.springframework.web.bind.annotation.RequestMapping;
 import org.springframework.web.bind.annotation.RequestMethod;
@@ -18,6 +26,12 @@ public class ItemController {
 
 	@Autowired
 	private ItemService itemService;
+	
+	@Autowired
+	private JmsTemplate jmsTemplate;
+	
+	@Autowired
+	private Destination topicDestination;
 	
 	//TODO 删除
 	//TODO 上架
@@ -57,6 +71,8 @@ public class ItemController {
 		
 		try {
 			itemService.updateItem(item, desc);
+			//发送mq消息
+			sendMQMsg(item.getId(), "update");
 			
 			return ResponseEntity.ok(null);
 		} catch (Exception e) {
@@ -77,6 +93,8 @@ public class ItemController {
 		
 		try {
 			Long itemId = itemService.saveItem(item, desc);
+			//发送mq消息
+			sendMQMsg(itemId, "insert");
 			
 			return ResponseEntity.ok(null);
 		} catch (Exception e) {
@@ -85,5 +103,24 @@ public class ItemController {
 		
 		//返回状态码为500
 		return ResponseEntity.status(HttpStatus.INTERNAL_SERVER_ERROR).build();
+	}
+
+	/**
+	 * 发送MQ消息
+	 * @param itemId 商品id
+	 * @param type 操作类型；如：insert/update/delete
+	 */
+	private void sendMQMsg(final Long itemId, final String type) {
+		jmsTemplate.send(topicDestination, new MessageCreator() {
+			
+			@Override
+			public Message createMessage(Session session) throws JMSException {
+				ActiveMQMapMessage mapMessage = new ActiveMQMapMessage();
+				mapMessage.setString("type", type);
+				mapMessage.setLong("itemId", itemId);
+				
+				return mapMessage;
+			}
+		});
 	}
 }

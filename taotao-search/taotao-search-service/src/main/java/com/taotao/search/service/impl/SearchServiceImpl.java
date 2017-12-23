@@ -69,4 +69,16 @@ public class SearchServiceImpl implements SearchService {
 		
 		return new DataGridResult(total, list);
 	}
+
+	@Override
+	public void saveOrUpdateSolrItem(SolrItem solrItem) throws Exception {
+		cloudSolrServer.addBean(solrItem);
+		cloudSolrServer.commit();
+	}
+
+	@Override
+	public void deleteSolrItemByItemId(Long itemId) throws Exception {
+		cloudSolrServer.deleteById(itemId.toString());
+		cloudSolrServer.commit();
+	}
 }
