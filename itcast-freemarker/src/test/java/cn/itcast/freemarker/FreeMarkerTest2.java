@@ -39,5 +39,81 @@ public class FreeMarkerTest2 {
 		//输出
 		template.process(dataModel, fileWriter);
 	}
+	/**
+	 * @throws Exception
+	 */
+	@Test
+	public void test02() throws Exception {
+		//创建freemarker配置对象
+		Configuration configuration = new Configuration(Configuration.VERSION_2_3_23);
+		//设置模块路径
+		configuration.setClassForTemplateLoading(FreeMarkerTest2.class, "/ftl");
+		//获取模版
+		Template template = configuration.getTemplate("assign.ftl");
+		//获取数据
+		Map<String, Object> dataModel = new HashMap<String, Object>();
+		
+		//输出对象
+		FileWriter fileWriter = new FileWriter(new File("D:\\itcast\\test\\assign.html"));
+		//输出
+		template.process(dataModel, fileWriter);
+	}
+	/**
+	 * @throws Exception
+	 */
+	@Test
+	public void test03() throws Exception {
+		//创建freemarker配置对象
+		Configuration configuration = new Configuration(Configuration.VERSION_2_3_23);
+		//设置模块路径
+		configuration.setClassForTemplateLoading(FreeMarkerTest2.class, "/ftl");
+		//获取模版
+		Template template = configuration.getTemplate("include.ftl");
+		//获取数据
+		Map<String, Object> dataModel = new HashMap<String, Object>();
+		
+		//输出对象
+		FileWriter fileWriter = new FileWriter(new File("D:\\itcast\\test\\include.html"));
+		//输出
+		template.process(dataModel, fileWriter);
+	}
+	/**
+	 * @throws Exception
+	 */
+	@Test
+	public void test04() throws Exception {
+		//创建freemarker配置对象
+		Configuration configuration = new Configuration(Configuration.VERSION_2_3_23);
+		//设置模块路径
+		configuration.setClassForTemplateLoading(FreeMarkerTest2.class, "/ftl");
+		//获取模版
+		Template template = configuration.getTemplate("empty.ftl");
+		//获取数据
+		Map<String, Object> dataModel = new HashMap<String, Object>();
+		
+		//输出对象
+		FileWriter fileWriter = new FileWriter(new File("D:\\itcast\\test\\empty.html"));
+		//输出
+		template.process(dataModel, fileWriter);
+	}
+	/**
+	 * @throws Exception
+	 */
+	@Test
+	public void test05() throws Exception {
+		//创建freemarker配置对象
+		Configuration configuration = new Configuration(Configuration.VERSION_2_3_23);
+		//设置模块路径
+		configuration.setClassForTemplateLoading(FreeMarkerTest2.class, "/ftl");
+		//获取模版
+		Template template = configuration.getTemplate("listAndMap.ftl");
+		//获取数据
+		Map<String, Object> dataModel = new HashMap<String, Object>();
+		
+		//输出对象
+		FileWriter fileWriter = new FileWriter(new File("D:\\itcast\\test\\listAndMap.html"));
+		//输出
+		template.process(dataModel, fileWriter);
+	}
 
 }
