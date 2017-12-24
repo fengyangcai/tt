@@ -28,10 +28,11 @@
 				HM:'0'
 			}
 		};
-		
-		function submitItem(){
+    	
+    	//添加商品到购物车并跳转到购物车列表页面
+		function doCart(){
 			var num = $("#buy-num").val();
-    		window.location.href= "http://www.taotao.com/cart/${item.id}.html?num="+num;
+    		window.location.href= "http://www.taotao.com/cart/${item.id?c}/"+num+".html";
     	}
 	</script>
 </head>
@@ -136,7 +137,8 @@
 		        <li id="choose-result"><div class="dt"></div><div class="dd"></div></li>
 				<li id="choose-btns">
 					<div id="choose-btn-append"  class="btn">
-							<a class="btn-append " id="InitCartUrl" href="http://www.taotao.com/cart/add/${item.id}.html" clstag="shangpin|keycount|product|initcarturl">加入购物车<b></b></a>
+						<a class="btn-append " id="InitCartUrl" href="javascript:doCart()" clstag="shangpin|keycount|product|initcarturl">加入购物车<b></b></a>
+						<%-- <a class="btn-append " id="InitCartUrl" href="http://www.taotao.com/cart/add/${item.id}.html" clstag="shangpin|keycount|product|initcarturl">加入购物车<b></b></a> --%>
 					</div>
 					<div id="choose-btn-easybuy" class="btn"></div>
 					<div id="choose-btn-divide" class="btn"></div>
@@ -155,9 +157,9 @@
 				<a href="javascript:;" class="spec-control" id="spec-backward"></a>
 				<div class="spec-items">
 					<ul class="lh">   
-						<#list item.images as pic>
+						<#list item.images as pic >
 							<li>
-								<img data-img="1" alt="${item.title}" src="${pic}" width="50" height="50" data-url="${pic}">
+							  <img data-img="1" class="img-hover"  alt="${item.title}" src="${pic}" width="50" height="50" data-url="${pic}">
 							</li>
 						</#list>
 					</ul>
@@ -213,7 +215,7 @@
 					<b></b>如果您发现商品信息不准确，欢迎纠错
 				</div>
 				<div class="detail-content">
-						${itemDesc.itemDesc }
+						${itemDesc.itemDesc! }
 				</div>
 			</div>
 			<div class="mc hide" data-widget="tab-content" id="product-detail-2">
