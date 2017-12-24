@@ -115,5 +115,24 @@ public class FreeMarkerTest2 {
 		//输出
 		template.process(dataModel, fileWriter);
 	}
+	/**
+	 * @throws Exception
+	 */
+	@Test
+	public void test06() throws Exception {
+		//创建freemarker配置对象
+		Configuration configuration = new Configuration(Configuration.VERSION_2_3_23);
+		//设置模块路径
+		configuration.setClassForTemplateLoading(FreeMarkerTest2.class, "/ftl");
+		//获取模版
+		Template template = configuration.getTemplate("macro.ftl");
+		//获取数据
+		Map<String, Object> dataModel = new HashMap<String, Object>();
+		
+		//输出对象
+		FileWriter fileWriter = new FileWriter(new File("D:\\itcast\\test\\macro.html"));
+		//输出
+		template.process(dataModel, fileWriter);
+	}
 
 }
