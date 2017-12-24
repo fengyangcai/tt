@@ -6,6 +6,8 @@ import javax.persistence.GenerationType;
 import javax.persistence.Id;
 import javax.persistence.Table;
 
+import org.apache.commons.lang3.StringUtils;
+
 @Table(name = "tb_item")
 public class Item extends BasePojo {
 
@@ -89,6 +91,13 @@ public class Item extends BasePojo {
         return image;
     }
 
+    public String[] getImages() {
+    	if(getImage() != null && !"".equals(getImage())) {
+    		return getImage().split(",");
+    	}
+    	return null;
+    }
+    
     public void setImage(String image) {
         this.image = image;
     }
