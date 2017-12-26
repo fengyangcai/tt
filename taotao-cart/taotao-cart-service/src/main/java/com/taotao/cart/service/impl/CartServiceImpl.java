@@ -1,11 +1,16 @@
 package com.taotao.cart.service.impl;
 
+import java.io.IOException;
+import java.util.ArrayList;
 import java.util.Date;
+import java.util.List;
 
 import org.apache.commons.lang3.StringUtils;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.stereotype.Service;
 
+import com.fasterxml.jackson.core.JsonParseException;
+import com.fasterxml.jackson.databind.JsonMappingException;
 import com.fasterxml.jackson.databind.ObjectMapper;
 import com.taotao.cart.pojo.Cart;
 import com.taotao.cart.service.CartService;
@@ -58,5 +63,41 @@ public class CartServiceImpl implements CartService {
 		
 		//保存购物车商品数据到redis
 		redisService.hset(key, field, MAPPER.writeValueAsString(cart));
+	}
+
+	@Override
+	public List<Cart> getCartListByUserId(Long userId) throws Exception {
+		String key = REDIS_CART_KEY + userId;
+		List<Cart> cartList = new ArrayList<>();
+		List<String> cartJsonStrList = redisService.hvals(key);
+		if(cartJsonStrList != null && cartJsonStrList.size() > 0) {
+			for (String cartJsonStr : cartJsonStrList) {
+				cartList.add(MAPPER.readValue(cartJsonStr, Cart.class));
+			}
+		}
+		return cartList;
+	}
+
+	@Override
+	public void updateCartNumByItemIdAndUserId(Integer num, Long itemId, Long userId) throws Exception {
+		//1、查询用户购买商品并修改购买数量
+		String key = REDIS_CART_KEY + "" + userId;
+		String field = itemId.toString();
+		String cartJsonStr = redisService.hget(key, field);
+		if(StringUtils.isNotBlank(cartJsonStr)) {
+			//2、将最新的购物车商品写回
+			Cart cart = MAPPER.readValue(cartJsonStr, Cart.class);
+			cart.setNum(num);
+			cart.setUpdated(new Date());
+			
+			redisService.hset(key, field, MAPPER.writeValueAsString(cart));
+		}
+	}
+
+	@Override
+	public void deleteCartByItemIdAndUserId(Long itemId, Long userId) {
+		String key = REDIS_CART_KEY + "" + userId;
+		String field = itemId.toString();
+		redisService.hdel(key, field);
 	}
 }
