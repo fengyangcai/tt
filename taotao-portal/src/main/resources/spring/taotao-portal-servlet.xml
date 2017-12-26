@@ -9,7 +9,7 @@
         http://www.springframework.org/schema/context http://www.springframework.org/schema/context/spring-context.xsd">
 
 	<!-- 配置controller扫描 -->
-	<context:component-scan base-package="com.taotao.portal.controller" />
+	<context:component-scan base-package="com.taotao.portal" />
 
 	<!-- 配置注解驱动 -->
 	<mvc:annotation-driven />

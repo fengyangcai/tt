@@ -18,6 +18,7 @@ import com.taotao.cart.pojo.Cart;
 import com.taotao.cart.service.CartService;
 import com.taotao.manage.pojo.Item;
 import com.taotao.manage.service.ItemService;
+import com.taotao.portal.service.CookieCartService;
 import com.taotao.portal.util.CookieUtils;
 import com.taotao.sso.pojo.User;
 import com.taotao.sso.service.UserService;
@@ -31,6 +32,9 @@ public class CartController {
 	
 	@Autowired
 	private CartService cartService;
+	
+	@Autowired
+	private CookieCartService cookieCartService;
 	
 	@Autowired
 	private ItemService itemService;
@@ -54,7 +58,7 @@ public class CartController {
 			if(user != null) {//已登录，删除redis中的购买商品
 				cartService.deleteCartByItemIdAndUserId(itemId, user.getId());
 			} else {//未登录，删除cookie中的购买商品
-				
+				cookieCartService.deleteCartByItemId(itemId, request, response);
 			}
 		} catch (Exception e) {
 			e.printStackTrace();
@@ -83,7 +87,7 @@ public class CartController {
 			if(user != null) {//已登录，修改redis中的购买数量
 				cartService.updateCartNumByItemIdAndUserId(num, itemId, user.getId());
 			} else {//未登录，修改cookie中的购买数量
-				
+				cookieCartService.updateCartNumByItemId(num, itemId, request, response);
 			}
 			return ResponseEntity.ok(null);
 		} catch (Exception e) {
@@ -112,7 +116,7 @@ public class CartController {
 				Item item = itemService.queryById(itemId);
 				cartService.addCartByItemIdAndUserId(num, item, user.getId());
 			} else {//未登录，将购物车数据存入到cookie
-				
+				cookieCartService.addCartByItemId(num, itemId, request, response);
 			}
 		} catch (Exception e) {
 			e.printStackTrace();
@@ -140,7 +144,7 @@ public class CartController {
 			if(user != null) {//已登录，从redis中获取购物车列表数据
 				cartList = cartService.getCartListByUserId(user.getId());
 			} else {//未登录，从cookie中获取购物车列表数据
-				
+				cartList = cookieCartService.getCartList(request);
 			}
 			mv.addObject("cartList", cartList);
 			
