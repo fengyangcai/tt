@@ -1,5 +1,7 @@
 package com.taotao.common.service.redis.impl;
 
+import java.util.List;
+
 import org.springframework.beans.factory.annotation.Autowired;
 
 import com.taotao.common.service.redis.RedisService;
@@ -40,6 +42,26 @@ public class JedisClusterService implements RedisService {
 	@Override
 	public Long incr(String key) {
 		return jedisCluster.incr(key);
+	}
+
+	@Override
+	public Long hset(String key, String field, String value) {
+		return jedisCluster.hset(key, field, value);
+	}
+
+	@Override
+	public String hget(String key, String field) {
+		return jedisCluster.hget(key, field);
+	}
+
+	@Override
+	public List<String> hvals(String key) {
+		return jedisCluster.hvals(key);
+	}
+
+	@Override
+	public Long hdel(String key, String field) {
+		return jedisCluster.hdel(key, field);
 	}
 
 }

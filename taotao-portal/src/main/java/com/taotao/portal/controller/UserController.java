@@ -20,7 +20,7 @@ import com.taotao.sso.service.UserService;
 @Controller
 public class UserController {
 	//登录成功标识符存放在cookie中的key的名称
-	private static final String COOKIE_TICKET = "TT_TICKET";
+	public static final String COOKIE_TICKET = "TT_TICKET";
 	@Autowired
 	private UserService userService;
 	

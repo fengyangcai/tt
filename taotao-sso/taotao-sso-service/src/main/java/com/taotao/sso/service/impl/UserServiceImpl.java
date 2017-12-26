@@ -1,5 +1,6 @@
 package com.taotao.sso.service.impl;
 
+import java.io.IOException;
 import java.util.Date;
 import java.util.List;
 
@@ -8,7 +9,9 @@ import org.apache.commons.lang3.StringUtils;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.stereotype.Service;
 
+import com.fasterxml.jackson.core.JsonParseException;
 import com.fasterxml.jackson.core.JsonProcessingException;
+import com.fasterxml.jackson.databind.JsonMappingException;
 import com.fasterxml.jackson.databind.ObjectMapper;
 import com.taotao.common.service.redis.RedisService;
 import com.taotao.sso.mapper.UserMapper;
@@ -96,6 +99,20 @@ public class UserServiceImpl implements UserService {
 		}
 		//4、返回redis中用户信息对应的部分key，--- ticket
 		return ticket;
+	}
+
+	@Override
+	public User queryUserByTicket(String ticket) throws Exception {
+		//根据ticket到redis获取用户信息json格式字符串；表示当前用户处于活跃状态
+		String key = TICKET_PREFIX + ticket;
+		String userJsonStr = redisService.get(key);
+		if(StringUtils.isNotBlank(userJsonStr)) {
+			//重新设置该信息的过期时间，1小时
+			redisService.expire(key, 3600);
+			
+			return MAPPER.readValue(userJsonStr, User.class);
+		}
+		return null;
 	}
 
 }

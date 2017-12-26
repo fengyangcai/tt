@@ -1,5 +1,7 @@
 package com.taotao.common.service.redis;
 
+import java.util.List;
+
 public interface RedisService {
 	
 	/**
@@ -47,4 +49,16 @@ public interface RedisService {
 	 * @return
 	 */
 	public Long incr(String key);
+	
+	//设置key对应的散列的某个域的值
+	public Long hset(String key, String field, String value);
+	
+	//获取某个key对应的域的值
+	public String hget(String key, String field);
+	
+	//获取某个key对应的所有域的值集合
+	public List<String> hvals(String key);
+	
+	//删除某个key对应散列的域
+	public Long hdel(String key, String field);
 }

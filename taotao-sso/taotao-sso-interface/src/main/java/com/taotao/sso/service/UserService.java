@@ -33,4 +33,12 @@ public interface UserService {
 	 */
 	String login(User user) throws Exception;
 
+	/**
+	 * 根据ticket查询用户信息
+	 * @param ticket 登录标识符
+	 * @return
+	 * @throws Exception 
+	 */
+	User queryUserByTicket(String ticket) throws Exception;
+
 }

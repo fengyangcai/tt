@@ -1,5 +1,7 @@
 package com.taotao.common.service.redis.impl;
 
+import java.util.List;
+
 import org.springframework.beans.factory.annotation.Autowired;
 
 import com.taotao.common.service.redis.RedisFunction;
@@ -86,6 +88,50 @@ public class JedisPoolService implements RedisService {
 			@Override
 			public Long callback(Jedis jedis) {
 				return jedis.incr(key);
+			}
+		});
+	}
+
+	@Override
+	public Long hset(final String key, final String field, final String value) {
+		return execute(new RedisFunction<Long, Jedis>() {
+
+			@Override
+			public Long callback(Jedis jedis) {
+				return jedis.hset(key, field, value);
+			}
+		});
+	}
+
+	@Override
+	public String hget(final String key, final String field) {
+		return execute(new RedisFunction<String, Jedis>() {
+
+			@Override
+			public String callback(Jedis jedis) {
+				return jedis.hget(key, field);
+			}
+		});
+	}
+
+	@Override
+	public List<String> hvals(final String key) {
+		return execute(new RedisFunction<List<String>, Jedis>() {
+
+			@Override
+			public List<String> callback(Jedis jedis) {
+				return jedis.hvals(key);
+			}
+		});
+	}
+
+	@Override
+	public Long hdel(final String key, final String field) {
+		return execute(new RedisFunction<Long, Jedis>() {
+
+			@Override
+			public Long callback(Jedis jedis) {
+				return jedis.hdel(key, field);
 			}
 		});
 	}

@@ -31,6 +31,10 @@
 		id="contentService" timeout="1000000"/>
 	<dubbo:reference interface="com.taotao.sso.service.UserService"
 		id="userService" timeout="1000000"/>
+	<dubbo:reference interface="com.taotao.cart.service.CartService"
+		id="cartService" timeout="1000000"/>
+	<dubbo:reference interface="com.taotao.manage.service.ItemService"
+		id="itemService" timeout="1000000"/>
 	
 </beans>
 
