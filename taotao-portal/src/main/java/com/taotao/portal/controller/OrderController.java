@@ -12,7 +12,6 @@ import org.springframework.web.servlet.ModelAndView;
 
 import com.taotao.cart.pojo.Cart;
 import com.taotao.cart.service.CartService;
-import com.taotao.portal.util.CookieUtils;
 import com.taotao.sso.pojo.User;
 import com.taotao.sso.service.UserService;
 
@@ -35,8 +34,9 @@ public class OrderController {
 	public ModelAndView toOrderCartPage(HttpServletRequest request) {
 		ModelAndView mv = new ModelAndView("order-cart");
 		try {
-			String ticket = CookieUtils.getCookieValue(request, UserController.COOKIE_TICKET);
-			User user = userService.queryUserByTicket(ticket);
+			/*String ticket = CookieUtils.getCookieValue(request, UserController.COOKIE_TICKET);
+			User user = userService.queryUserByTicket(ticket);*/
+			User user = (User)request.getAttribute("user");
 			//获取购物车列表数据
 			List<Cart> carts = cartService.getCartListByUserId(user.getId());
 			
